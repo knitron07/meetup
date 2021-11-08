@@ -1,4 +1,4 @@
-import React from 'react';
+import { MongoClient } from 'mongodb';
 import MeetupList from '../components/meetups/MeetupList';
 
 const DUMMY_MEETUPS = [
@@ -30,22 +30,47 @@ function HomePage(props) {
   );
 }
 
-export async function getServerSideProps() {
-  //fetch data from api
-  return {
-    props: {
-      meetups: DUMMY_MEETUPS,
-    },
-  };
-}
+// export async function getServerSideProps() {
+//   const client = await MongoClient.connect(
+//     `mongodb+srv://samardeep:${process.env.MONGODBPASS}@cluster0.oubka.mongodb.net/meetUpDB?retryWrites=true&w=majority`,
+//   );
 
-// export async function getStaticProps() {
-//   //fetch data from api
+//   const db = client.db();
+//   const meetupsCollection = db.collection('meetUpsCollection');
+//   const allMeetups = await meetupsCollection.find().toArray();
+//   client.close();
 //   return {
 //     props: {
-//       meetups: DUMMY_MEETUPS,
+//       meetups: allMeetups.map((meetup) => ({
+//         title: meetup.title,
+//         image: meetup.image,
+//         address: meetup.address,
+//         id: meetup._id.toString(),
+//       })),
 //     },
-//     revalidate: 3,
 //   };
 // }
+
+export async function getStaticProps() {
+  //fetch data from api
+  const client = await MongoClient.connect(
+    `mongodb+srv://samardeep:${process.env.MONGODBPASS}@cluster0.oubka.mongodb.net/meetUpDB?retryWrites=true&w=majority`,
+  );
+
+  const db = client.db();
+  const meetupsCollection = db.collection('meetUpsCollection');
+  const allMeetups = await meetupsCollection.find().toArray();
+  client.close();
+  return {
+    props: {
+      meetups: allMeetups.map((meetup) => ({
+        title: meetup.title,
+        image: meetup.image,
+        address: meetup.address,
+        id: meetup._id.toString(),
+      })),
+    },
+    revalidate: 3,
+  };
+}
 export default HomePage;
