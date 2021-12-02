@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import NewMeetupForm from '../../components/meetups/NewMeetupForm';
 import axios from 'axios';
 
@@ -13,9 +14,13 @@ function NewMeetupPage() {
     router.push('/');
   };
   return (
-    <div>
+    <>
+      <Head>
+        <title>Add new Meetups</title>
+        <meta name="description" content="Add your meetups" />
+      </Head>
       <NewMeetupForm onAddMeetup={addMeetupHandler} />
-    </div>
+    </>
   );
 }
 
